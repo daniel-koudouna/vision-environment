@@ -36,10 +36,15 @@ RUN cd /opt && mkdir -p opencv-4.3.0/build &&\
     -D WITH_OPENGL=OFF \
     -D OPENCV_ENABLE_NONFREE=ON \
     -D BUILD_EXAMPLES=OFF \
+    -D BUILD_TESTS=OFF \
+    -D BUILD_WEBP=OFF \
+    -D INSTALL_C_EXAMPLES=OFF \
     -D BUILD_JAVA=OFF \
+    -D BUILD_NEW_PYTHON_SUPPORT=ON \
+    -D OPENCV_GENERATE_PKGCONFIG=ON \
     -D CUDA_NVCC_FLAGS="--expt-relaxed-constexpr" \
     -D OPENCV_EXTRA_MODULES_PATH="../../opencv_contrib-4.3.0/modules" \
     .. &&\
-    cd /opt/opencv-4.3.0/build && make -j 4 && make -j 4 install &&\
+    cd /opt/opencv-4.3.0/build && make -j 4 install &&\
     rm -rf /opt/opencv-4.3.0/build
 
