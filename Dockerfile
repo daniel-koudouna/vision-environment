@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y  \
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget && \
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
     apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
-    apt-get update && apt-get install -y cmake python3.6 python3.6-dev python3-pip && \
+    apt-get update && apt-get install -y cmake python3 python3-dev python3-pip & \
     rm -rf /var/lib/apt/lists/*
 
 
