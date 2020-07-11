@@ -4,7 +4,7 @@ FROM nvidia/cuda:10.2-devel-ubuntu18.04
 RUN apt-get update && apt-get install -y  \
     sudo clang-format wget apt-utils \
     build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
-    wget build-essential checkinstall cmake pkg-config yasm git \
+    wget build-essential checkinstall pkg-config yasm git \
     gfortran libjpeg8-dev libpng-dev libtiff5-dev libavcodec-dev libavformat-dev \
     libswscale-dev libdc1394-22-dev libxine2-dev libv4l-dev libavcodec-dev libavformat-dev libswscale-dev \
     qt5-default libgtk2.0-dev libtbb-dev libatlas-base-dev \
@@ -13,10 +13,19 @@ RUN apt-get update && apt-get install -y  \
     libgflags-dev libgphoto2-dev libeigen3-dev libhdf5-dev doxygen software-properties-common &&\
     rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.7
-RUN add-apt-repository -y ppa:deadsnakes/ppa &&\
-    apt-get update && apt-get install -y python3.7 &&\
+
+## Install CMake and Python3.6
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget && \
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
+    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
+    apt-get update && apt-get install -y cmake python3.6 python3.6-dev python3-pip && \
     rm -rf /var/lib/apt/lists/*
+
+
+## Install Python packages
+RUN python -m pip install --upgrade pip
+RUN python -m pip install --upgrade setuptools wheel twine keyring keyrings.alt
+
 
 # Install Opencv 4.1.2 + contrib + cuda
 RUN wget https://github.com/opencv/opencv/archive/4.3.0.tar.gz -O /opt/core.tar.gz &&\
@@ -45,6 +54,5 @@ RUN cd /opt && mkdir -p opencv-4.3.0/build &&\
     -D CUDA_NVCC_FLAGS="--expt-relaxed-constexpr" \
     -D OPENCV_EXTRA_MODULES_PATH="../../opencv_contrib-4.3.0/modules" \
     .. &&\
-    cd /opt/opencv-4.3.0/build && make -j 4 install &&\
+    cd /opt/opencv-4.3.0/build && make -j 2 install &&\
     rm -rf /opt/opencv-4.3.0/build
-
