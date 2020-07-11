@@ -3,6 +3,8 @@ FROM nvidia/cuda:10.2-devel-ubuntu18.04
 # Get apt dependencies
 RUN apt-get update && apt-get install -y  \
     sudo clang-format wget apt-utils \
+    apt-transport-https ca-certificates gnupg \
+    python3 python3-dev python3-pip \
     build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
     wget build-essential checkinstall pkg-config yasm git \
     gfortran libjpeg8-dev libpng-dev libtiff5-dev libavcodec-dev libavformat-dev \
@@ -13,19 +15,16 @@ RUN apt-get update && apt-get install -y  \
     libgflags-dev libgphoto2-dev libeigen3-dev libhdf5-dev doxygen software-properties-common &&\
     rm -rf /var/lib/apt/lists/*
 
-
-## Install CMake and Python3.6
-RUN apt-get update && apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget && \
-    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
-    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' && \
-    apt-get update && apt-get install -y cmake python3 python3-dev python3-pip & \
+## Install CMake
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null &&\
+    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' &&\
+    apt-get update && apt-get install -y cmake &&\
     rm -rf /var/lib/apt/lists/*
 
-
 ## Install Python packages
+RUN rm -rf /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python
 RUN python -m pip install --upgrade pip
 RUN python -m pip install --upgrade setuptools wheel twine keyring keyrings.alt
-
 
 # Install Opencv 4.1.2 + contrib + cuda
 RUN wget https://github.com/opencv/opencv/archive/4.3.0.tar.gz -O /opt/core.tar.gz &&\
